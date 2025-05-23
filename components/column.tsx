@@ -140,33 +140,39 @@ export default function Column({
             {provided.placeholder}
 
             {isAddingTask ? (
-              <div className="mt-2 p-3 bg-card rounded-md shadow-sm border border-border">
-                <Label htmlFor="task-title" className="text-foreground">
-                  Task Title
-                </Label>
-                <Input
-                  id="task-title"
-                  value={newTaskTitle}
-                  onChange={(e) => setNewTaskTitle(e.target.value)}
-                  placeholder="Enter task title"
-                  className="mb-2"
-                />
-                <Label htmlFor="task-description" className="text-foreground">
-                  Description (optional)
-                </Label>
-                <Textarea
-                  id="task-description"
-                  value={newTaskDescription}
-                  onChange={(e) => setNewTaskDescription(e.target.value)}
-                  placeholder="Enter task description"
-                  className="mb-2"
-                  rows={3}
-                />
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={handleAddTask}>
+              <div className="mt-3 p-4 bg-card rounded-lg shadow-sm border border-border space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="task-title" className="text-sm font-medium text-foreground">
+                    Task Title
+                  </Label>
+                  <Input
+                    id="task-title"
+                    value={newTaskTitle}
+                    onChange={(e) => setNewTaskTitle(e.target.value)}
+                    placeholder="Enter task title"
+                    className="w-full"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="task-description" className="text-sm font-medium text-foreground">
+                    Description (optional)
+                  </Label>
+                  <Textarea
+                    id="task-description"
+                    value={newTaskDescription}
+                    onChange={(e) => setNewTaskDescription(e.target.value)}
+                    placeholder="Enter task description"
+                    className="w-full resize-none"
+                    rows={3}
+                  />
+                </div>
+                
+                <div className="flex gap-2 pt-2">
+                  <Button size="sm" onClick={handleAddTask} className="flex-1">
                     Add
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => setIsAddingTask(false)}>
+                  <Button size="sm" variant="outline" onClick={() => setIsAddingTask(false)} className="flex-1">
                     Cancel
                   </Button>
                 </div>

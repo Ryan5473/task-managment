@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd"
-import { Plus, Download, Upload, Trash2, Calendar } from "lucide-react"
+import { Plus, Download, Upload, Trash2, Calendar, Settings } from "lucide-react"
 import { toast } from "sonner"
 import Column from "./column"
 import TaskDetailSidebar from "./task-detail-sidebar"
@@ -684,10 +684,16 @@ export default function KanbanBoard() {
   // Show loading state
   if (database.isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">Loading FlowMate...</p>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-background via-background to-muted/50">
+        <div className="text-center space-y-6">
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-primary/20 border-t-primary mx-auto"></div>
+            <Calendar className="h-6 w-6 text-primary absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold text-foreground">Loading FlowMate</h2>
+            <p className="text-sm text-muted-foreground">Setting up your workspace...</p>
+          </div>
         </div>
       </div>
     )
@@ -695,64 +701,10 @@ export default function KanbanBoard() {
 
   const renderBoardContent = () => (
     <>
-      {/* Header with data management controls */}
-      <div className="border-b">
-        {/* Mobile-first responsive header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 gap-4">
-          {/* App title and logo */}
-          <div className="flex items-center space-x-2 flex-shrink-0">
-            <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-violet-600" />
-            <h1 className="text-xl sm:text-2xl font-bold">FlowMate</h1>
-          </div>
-          
-          {/* Controls container */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-            {/* Action buttons */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <Button variant="outline" size="sm" onClick={handleExportData} className="flex-shrink-0">
-                <Download className="h-4 w-4 mr-1 sm:mr-2" />
-                <span className="text-xs sm:text-sm">Export</span>
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleImportData} className="flex-shrink-0">
-                <Upload className="h-4 w-4 mr-1 sm:mr-2" />
-                <span className="text-xs sm:text-sm">Import</span>
-              </Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="flex-shrink-0">
-                    <Trash2 className="h-4 w-4 mr-1 sm:mr-2" />
-                    <span className="text-xs sm:text-sm">Clear All</span>
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Clear All Data</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will permanently delete all tasks, columns, and automation rules. This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleClearAllData} className="bg-red-600 hover:bg-red-700">
-                      Clear All Data
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-            
-            {/* Theme toggle */}
-            <div className="flex justify-center sm:justify-end">
-              <ThemeToggle />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Board content */}
+      {/* Board Content */}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="flex-1 overflow-x-auto p-4">
-          <div className="flex gap-6 min-w-max">
+        <div className="flex-1 overflow-x-auto p-6">
+          <div className="flex gap-6 min-w-max pb-6">
             {columns.map((column) => (
               <Column
                 key={column.id}
@@ -765,28 +717,33 @@ export default function KanbanBoard() {
               />
             ))}
 
-            {/* Add Column Button */}
+            {/* Enhanced Add Column Button */}
             {isAddingColumn ? (
-              <div className="w-80 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-                <div className="space-y-3">
-                  <Label htmlFor="column-title">Column Title</Label>
-                  <Input
-                    id="column-title"
-                    value={newColumnTitle}
-                    onChange={(e) => setNewColumnTitle(e.target.value)}
-                    placeholder="Enter column title..."
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        addColumn()
-                      } else if (e.key === "Escape") {
-                        setIsAddingColumn(false)
-                        setNewColumnTitle("")
-                      }
-                    }}
-                    autoFocus
-                  />
+              <div className="w-80 bg-card rounded-xl shadow-sm border border-border p-5">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="column-title" className="text-sm font-medium">
+                      Column Title
+                    </Label>
+                    <Input
+                      id="column-title"
+                      value={newColumnTitle}
+                      onChange={(e) => setNewColumnTitle(e.target.value)}
+                      placeholder="Enter column title..."
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          addColumn()
+                        } else if (e.key === "Escape") {
+                          setIsAddingColumn(false)
+                          setNewColumnTitle("")
+                        }
+                      }}
+                      autoFocus
+                      className="w-full"
+                    />
+                  </div>
                   <div className="flex gap-2">
-                    <Button onClick={addColumn} size="sm">
+                    <Button onClick={addColumn} size="sm" className="flex-1" disabled={!newColumnTitle.trim()}>
                       Add Column
                     </Button>
                     <Button
@@ -796,6 +753,7 @@ export default function KanbanBoard() {
                       }}
                       variant="outline"
                       size="sm"
+                      className="flex-1"
                     >
                       Cancel
                     </Button>
@@ -805,10 +763,13 @@ export default function KanbanBoard() {
             ) : (
               <button
                 onClick={() => setIsAddingColumn(true)}
-                className="w-80 h-20 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                className="w-80 h-32 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all duration-200 group"
               >
-                <Plus className="h-6 w-6 mr-2" />
-                Add Column
+                <div className="p-3 rounded-full bg-muted group-hover:bg-primary/10 transition-colors mb-2">
+                  <Plus className="h-6 w-6" />
+                </div>
+                <span className="font-medium">Add Column</span>
+                <span className="text-xs opacity-70">Click to create a new column</span>
               </button>
             )}
           </div>
@@ -830,7 +791,7 @@ export default function KanbanBoard() {
   )
 
   const renderAutomationContent = () => (
-    <div className="p-6">
+    <div className="p-6 max-w-6xl mx-auto">
       <AutomationRules
         rules={rules}
         columns={columns}
@@ -842,18 +803,98 @@ export default function KanbanBoard() {
   )
 
   return (
-    <div className="min-h-screen bg-noise flex flex-col">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-        <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mt-4">
-          <TabsTrigger value="board">Kanban Board</TabsTrigger>
-          <TabsTrigger value="automation">Automation</TabsTrigger>
-        </TabsList>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 flex flex-col">
+      {/* Header - Now at the top */}
+      <div className="border-b border-border bg-card/50 backdrop-blur-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between p-6 gap-6">
+          {/* Brand Section */}
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-gradient-to-br from-primary to-primary/80 rounded-xl shadow-lg">
+              <Calendar className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground">FlowMate</h1>
+              <p className="text-sm text-muted-foreground">Streamline your workflow</p>
+            </div>
+          </div>
+          
+          {/* Controls Section */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            {/* Stats */}
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                <span>{columns.length} columns</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span>{columns.reduce((acc, col) => acc + col.tasks.length, 0)} tasks</span>
+              </div>
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={handleExportData} className="gap-2">
+                <Download className="h-4 w-4" />
+                Export
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleImportData} className="gap-2">
+                <Upload className="h-4 w-4" />
+                Import
+              </Button>
+              
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Trash2 className="h-4 w-4" />
+                    Clear All
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Clear All Data</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete all tasks, columns, and automation rules. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleClearAllData} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Clear All Data
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+              
+              <ThemeToggle />
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <TabsContent value="board" className="flex-1 flex flex-col mt-0">
+      {/* Tabs - Now below the header */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+        {/* Tab Navigation */}
+        <div className="bg-card/30 backdrop-blur-sm border-b border-border">
+          <div className="flex justify-center py-4">
+            <TabsList className="grid grid-cols-2 w-full max-w-md bg-muted/50">
+              <TabsTrigger value="board" className="gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm">
+                <Calendar className="h-4 w-4" />
+                Kanban Board
+              </TabsTrigger>
+              <TabsTrigger value="automation" className="gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm">
+                <Settings className="h-4 w-4" />
+                Automation
+              </TabsTrigger>
+            </TabsList>
+          </div>
+        </div>
+
+        <TabsContent value="board" className="flex-1 flex flex-col m-0">
           {renderBoardContent()}
         </TabsContent>
 
-        <TabsContent value="automation" className="flex-1 flex flex-col mt-0">
+        <TabsContent value="automation" className="flex-1 flex flex-col m-0">
           {renderAutomationContent()}
         </TabsContent>
       </Tabs>
