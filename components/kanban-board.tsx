@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd"
-import { Plus, Download, Upload, Trash2 } from "lucide-react"
+import { Plus, Download, Upload, Trash2, Calendar } from "lucide-react"
 import { toast } from "sonner"
 import Column from "./column"
 import TaskDetailSidebar from "./task-detail-sidebar"
@@ -632,7 +632,7 @@ export default function KanbanBoard() {
       const url = URL.createObjectURL(dataBlob)
       const link = document.createElement("a")
       link.href = url
-      link.download = `day-planner-backup-${new Date().toISOString().split("T")[0]}.json`
+      link.download = `flowmate-backup-${new Date().toISOString().split("T")[0]}.json`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -684,10 +684,10 @@ export default function KanbanBoard() {
   // Show loading state
   if (database.isLoading) {
     return (
-      <div className="min-h-screen bg-noise flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 dark:border-gray-100 mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">Loading your day planner...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">Loading FlowMate...</p>
         </div>
       </div>
     )
@@ -698,7 +698,10 @@ export default function KanbanBoard() {
       {/* Header with data management controls */}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center space-x-4">
-          <h1 className="text-2xl font-bold">Day Planner</h1>
+          <div className="flex items-center space-x-2">
+            <Calendar className="h-8 w-8 text-violet-600" />
+            <h1 className="text-2xl font-bold">FlowMate</h1>
+          </div>
           <div className="flex items-center space-x-2">
             <Button variant="outline" size="sm" onClick={handleExportData}>
               <Download className="h-4 w-4 mr-2" />

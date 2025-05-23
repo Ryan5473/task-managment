@@ -4,23 +4,23 @@ import type { Task, Column, Rule } from "@/types/kanban"
 /**
  * Database interface defining the structure of our IndexedDB database
  */
-interface DayPlannerDatabase {
+interface FlowMateDatabase {
   tasks: EntityTable<Task, "id">
   columns: EntityTable<Column, "id">
   rules: EntityTable<Rule, "id">
 }
 
 /**
- * Day Planner Database class extending Dexie
+ * FlowMate Database class extending Dexie
  * Manages local storage for tasks, columns, and automation rules
  */
-class DayPlannerDB extends Dexie {
+class FlowMateDB extends Dexie {
   tasks!: EntityTable<Task, "id">
   columns!: EntityTable<Column, "id">
   rules!: EntityTable<Rule, "id">
 
   constructor() {
-    super("DayPlannerDB")
+    super("FlowMateDB")
     
     // Define database schema
     this.version(1).stores({
@@ -32,7 +32,7 @@ class DayPlannerDB extends Dexie {
 }
 
 // Create and export database instance
-export const db = new DayPlannerDB()
+export const db = new FlowMateDB()
 
 /**
  * Database service functions for managing data persistence

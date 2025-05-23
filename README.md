@@ -1,8 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FlowMate
+
+A modern, efficient task management and productivity application built with Next.js. FlowMate features a Kanban board interface with drag-and-drop functionality, automation rules, and local data persistence.
+
+## Features
+
+- **Kanban Board**: Visual task management with customizable columns
+- **Drag & Drop**: Intuitive task organization
+- **Task Management**: Complete task details with subtasks, custom fields, and due dates
+- **Automation Rules**: Automated task workflows based on conditions
+- **Local Storage**: All data persists locally using IndexedDB
+- **Data Management**: Export/import backups and clear data functionality
+- **Dark Mode**: Theme toggle support
+- **Responsive Design**: Works on desktop and mobile devices
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
+
+```bash
+npm install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -14,23 +33,30 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see FlowMate.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Technology Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework**: Next.js 15 with React 19
+- **Language**: TypeScript with strict typing
+- **Styling**: Tailwind CSS with Radix UI components
+- **Database**: IndexedDB via Dexie for local storage
+- **Drag & Drop**: @hello-pangea/dnd
+- **Icons**: Lucide React
 
-## Learn More
+## Data Persistence
 
-To learn more about Next.js, take a look at the following resources:
+FlowMate uses IndexedDB for local data storage, ensuring your tasks, columns, and automation rules persist between sessions. No external server or account required - everything stays on your device.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Automation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Create custom automation rules to streamline your workflow:
+- Move overdue tasks automatically
+- Auto-complete tasks when all subtasks are done
+- Custom field-based conditions and actions
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The easiest way to deploy FlowMate is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
