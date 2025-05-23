@@ -696,46 +696,57 @@ export default function KanbanBoard() {
   const renderBoardContent = () => (
     <>
       {/* Header with data management controls */}
-      <div className="flex items-center justify-between p-4 border-b">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <Calendar className="h-8 w-8 text-violet-600" />
-            <h1 className="text-2xl font-bold">FlowMate</h1>
+      <div className="border-b">
+        {/* Mobile-first responsive header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 gap-4">
+          {/* App title and logo */}
+          <div className="flex items-center space-x-2 flex-shrink-0">
+            <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-violet-600" />
+            <h1 className="text-xl sm:text-2xl font-bold">FlowMate</h1>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={handleExportData}>
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleImportData}>
-              <Upload className="h-4 w-4 mr-2" />
-              Import
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Clear All
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Clear All Data</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete all tasks, columns, and automation rules. This action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleClearAllData} className="bg-red-600 hover:bg-red-700">
-                    Clear All Data
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+          
+          {/* Controls container */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+            {/* Action buttons */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button variant="outline" size="sm" onClick={handleExportData} className="flex-shrink-0">
+                <Download className="h-4 w-4 mr-1 sm:mr-2" />
+                <span className="text-xs sm:text-sm">Export</span>
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleImportData} className="flex-shrink-0">
+                <Upload className="h-4 w-4 mr-1 sm:mr-2" />
+                <span className="text-xs sm:text-sm">Import</span>
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex-shrink-0">
+                    <Trash2 className="h-4 w-4 mr-1 sm:mr-2" />
+                    <span className="text-xs sm:text-sm">Clear All</span>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Clear All Data</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete all tasks, columns, and automation rules. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleClearAllData} className="bg-red-600 hover:bg-red-700">
+                      Clear All Data
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+            
+            {/* Theme toggle */}
+            <div className="flex justify-center sm:justify-end">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
-        <ThemeToggle />
       </div>
 
       {/* Board content */}
