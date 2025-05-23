@@ -244,25 +244,25 @@ export default function KanbanBoard() {
             id: "column-1",
             title: "To Do",
             tasks: mockTasks["To Do"],
-            color: "bg-blue-50 dark:bg-blue-900/30",
+            color: "bg-blue-300 dark:bg-blue-900/30",
           },
           {
             id: "column-2",
             title: "In Progress",
             tasks: mockTasks["In Progress"],
-            color: "bg-yellow-50 dark:bg-yellow-900/30",
+            color: "bg-yellow-300 dark:bg-yellow-900/30",
           },
           {
             id: "column-3",
             title: "Blocked",
             tasks: mockTasks["Blocked"],
-            color: "bg-red-50 dark:bg-red-900/30",
+            color: "bg-red-300 dark:bg-red-900/30",
           },
           {
             id: "column-4",
             title: "Completed",
             tasks: mockTasks["Completed"],
-            color: "bg-green-50 dark:bg-green-900/30",
+            color: "bg-green-300 dark:bg-green-900/30",
           },
         ]
 

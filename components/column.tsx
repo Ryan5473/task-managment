@@ -16,13 +16,13 @@ import { generateId } from "@/lib/utils"
 // Add predefined colors with theme variables
 const COLUMN_COLORS = [
   { name: "Default", value: "bg-card" },
-  { name: "Blue", value: "bg-blue-50 dark:bg-blue-900/30" },
-  { name: "Green", value: "bg-green-50 dark:bg-green-900/30" },
-  { name: "Yellow", value: "bg-yellow-50 dark:bg-yellow-900/30" },
-  { name: "Purple", value: "bg-purple-50 dark:bg-purple-900/30" },
-  { name: "Pink", value: "bg-pink-50 dark:bg-pink-900/30" },
-  { name: "Orange", value: "bg-orange-50 dark:bg-orange-900/30" },
-  { name: "Cyan", value: "bg-cyan-50 dark:bg-cyan-900/30" },
+  { name: "Blue", value: "bg-blue-300 dark:bg-blue-900/30" },
+  { name: "Green", value: "bg-green-300 dark:bg-green-900/30" },
+  { name: "Yellow", value: "bg-yellow-300 dark:bg-yellow-900/30" },
+  { name: "Purple", value: "bg-purple-300 dark:bg-purple-900/30" },
+  { name: "Pink", value: "bg-pink-300 dark:bg-pink-900/30" },
+  { name: "Orange", value: "bg-orange-300 dark:bg-orange-900/30" },
+  { name: "Cyan", value: "bg-cyan-300 dark:bg-cyan-900/30" },
 ]
 
 interface ColumnProps {
