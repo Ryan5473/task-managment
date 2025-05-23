@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd"
-import { Plus } from "lucide-react"
+import { Plus, Download, Upload, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import Column from "./column"
 import TaskDetailSidebar from "./task-detail-sidebar"
@@ -12,10 +12,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import type { Task, Column as ColumnType, Rule } from "@/types/kanban"
 import { generateId } from "@/lib/utils"
+import { useDatabase } from "@/hooks/use-database"
 
-// Mock data for initial tasks
+// Mock data for initial setup when no data exists in database
 const generateMockTasks = (): { [key: string]: Task[] } => {
   // Helper to create a date string (past or future)
   const createDate = (daysFromNow: number): string => {
@@ -218,73 +220,132 @@ export default function KanbanBoard() {
   const [isAddingColumn, setIsAddingColumn] = useState(false)
   const [rules, setRules] = useState<Rule[]>([])
   const [activeTab, setActiveTab] = useState("board")
+  const [isInitialized, setIsInitialized] = useState(false)
+  const [triggerSave, setTriggerSave] = useState(0)
 
-  // Initialize with default columns and mock data
+  // Database hook
+  const database = useDatabase()
+
+  // Initialize data from database or create default data
   useEffect(() => {
-    const mockTasks = generateMockTasks()
+    const initializeData = async () => {
+      const data = await database.loadData()
+      
+      if (data && data.columns.length > 0) {
+        // Load existing data from database
+        setColumns(data.columns)
+        setRules(data.rules)
+      } else {
+        // No data in database, create default data
+        const mockTasks = generateMockTasks()
 
-    const initialColumns: ColumnType[] = [
-      {
-        id: "column-1",
-        title: "To Do",
-        tasks: mockTasks["To Do"],
-        color: "bg-blue-50 dark:bg-blue-900/30",
-      },
-      {
-        id: "column-2",
-        title: "In Progress",
-        tasks: mockTasks["In Progress"],
-        color: "bg-yellow-50 dark:bg-yellow-900/30",
-      },
-      {
-        id: "column-3",
-        title: "Blocked",
-        tasks: mockTasks["Blocked"],
-        color: "bg-red-50 dark:bg-red-900/30",
-      },
-      {
-        id: "column-4",
-        title: "Completed",
-        tasks: mockTasks["Completed"],
-        color: "bg-green-50 dark:bg-green-900/30",
-      },
-    ]
-    setColumns(initialColumns)
+        const initialColumns: ColumnType[] = [
+          {
+            id: "column-1",
+            title: "To Do",
+            tasks: mockTasks["To Do"],
+            color: "bg-blue-50 dark:bg-blue-900/30",
+          },
+          {
+            id: "column-2",
+            title: "In Progress",
+            tasks: mockTasks["In Progress"],
+            color: "bg-yellow-50 dark:bg-yellow-900/30",
+          },
+          {
+            id: "column-3",
+            title: "Blocked",
+            tasks: mockTasks["Blocked"],
+            color: "bg-red-50 dark:bg-red-900/30",
+          },
+          {
+            id: "column-4",
+            title: "Completed",
+            tasks: mockTasks["Completed"],
+            color: "bg-green-50 dark:bg-green-900/30",
+          },
+        ]
 
-    // Add a sample automation rule
-    setRules([
-      {
-        id: `rule-${generateId()}`,
-        name: "Move overdue tasks to Blocked",
-        condition: {
-          type: "due-date",
-          operator: "is-overdue",
-        },
-        action: {
-          type: "move-to-column",
-          targetColumnId: "column-3", // Blocked column
-        },
-        enabled: true,
-      },
-      {
-        id: `rule-${generateId()}`,
-        name: "Move completed tasks when all subtasks done",
-        condition: {
-          type: "subtasks-completed",
-          operator: "all-completed",
-        },
-        action: {
-          type: "move-to-column",
-          targetColumnId: "column-4", // Completed column
-        },
-        enabled: true,
-      },
-    ])
-  }, [])
+        const initialRules: Rule[] = [
+          {
+            id: `rule-${generateId()}`,
+            name: "Move overdue tasks to Blocked",
+            condition: {
+              type: "due-date",
+              operator: "is-overdue",
+            },
+            action: {
+              type: "move-to-column",
+              targetColumnId: "column-3", // Blocked column
+            },
+            enabled: true,
+          },
+          {
+            id: `rule-${generateId()}`,
+            name: "Move completed tasks when all subtasks done",
+            condition: {
+              type: "subtasks-completed",
+              operator: "all-completed",
+            },
+            action: {
+              type: "move-to-column",
+              targetColumnId: "column-4", // Completed column
+            },
+            enabled: true,
+          },
+        ]
+
+        setColumns(initialColumns)
+        setRules(initialRules)
+
+        // Save initial data to database
+        await Promise.all([
+          database.saveColumns(initialColumns),
+          database.saveRules(initialRules)
+        ])
+        
+        toast.success("Welcome! Sample data has been created.")
+      }
+      
+      setIsInitialized(true)
+    }
+
+    initializeData()
+  }, []) // Removed database dependency to prevent infinite loop
+
+  // Auto-save columns when they change (debounced)
+  useEffect(() => {
+    if (!isInitialized) return
+
+    const timeoutId = setTimeout(() => {
+      database.saveColumns(columns)
+    }, 1000) // Save after 1 second of no changes
+
+    return () => clearTimeout(timeoutId)
+  }, [columns, database.saveColumns, isInitialized]) // Use specific function instead of database object
+
+  // Immediate save trigger for new tasks
+  useEffect(() => {
+    if (!isInitialized || triggerSave === 0) return
+
+    // Save immediately when triggerSave changes
+    database.saveColumns(columns)
+  }, [triggerSave, database.saveColumns, columns, isInitialized])
+
+  // Auto-save rules when they change (debounced)
+  useEffect(() => {
+    if (!isInitialized) return
+
+    const timeoutId = setTimeout(() => {
+      database.saveRules(rules)
+    }, 1000) // Save after 1 second of no changes
+
+    return () => clearTimeout(timeoutId)
+  }, [rules, database.saveRules, isInitialized]) // Use specific function instead of database object
 
   // Process automation rules
   useEffect(() => {
-    if (rules.length === 0) return
+    if (rules.length === 0 || !isInitialized) return
 
     // Only process enabled rules
     const enabledRules = rules.filter((rule) => rule.enabled)
@@ -373,7 +434,7 @@ export default function KanbanBoard() {
 
       setColumns(newColumns)
     }
-  }, [columns, rules, selectedTask])
+  }, [columns, rules, selectedTask, isInitialized])
 
   const handleDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result
@@ -398,214 +459,364 @@ export default function KanbanBoard() {
     const task = sourceColumn.tasks.find((t) => t.id === draggableId)
     if (!task) return
 
-    // Remove the task from the source column
-    newColumns[sourceColIndex] = {
-      ...sourceColumn,
-      tasks: sourceColumn.tasks.filter((t) => t.id !== draggableId),
-    }
-
-    // Add the task to the destination column with updated status
+    // Update task status to match destination column
     const updatedTask = { ...task, status: destColumn.title }
-    newColumns[destColIndex] = {
-      ...destColumn,
-      tasks: [
-        ...destColumn.tasks.slice(0, destination.index),
-        updatedTask,
-        ...destColumn.tasks.slice(destination.index),
-      ],
+
+    if (source.droppableId === destination.droppableId) {
+      // Reordering within the same column
+      const newTasks = Array.from(sourceColumn.tasks)
+      newTasks.splice(source.index, 1)
+      newTasks.splice(destination.index, 0, updatedTask)
+
+      newColumns[sourceColIndex] = {
+        ...sourceColumn,
+        tasks: newTasks,
+      }
+    } else {
+      // Moving to a different column
+      // Remove from source column
+      newColumns[sourceColIndex] = {
+        ...sourceColumn,
+        tasks: sourceColumn.tasks.filter((t) => t.id !== draggableId),
+      }
+
+      // Add to destination column
+      const destTasks = Array.from(destColumn.tasks)
+      destTasks.splice(destination.index, 0, updatedTask)
+
+      newColumns[destColIndex] = {
+        ...destColumn,
+        tasks: destTasks,
+      }
+
+      // Update selected task if it's the one being moved
+      if (selectedTask && selectedTask.id === draggableId) {
+        setSelectedTask(updatedTask)
+      }
+
+      
     }
 
     setColumns(newColumns)
-
-    // Update selected task if it's the one being moved
-    if (selectedTask && selectedTask.id === draggableId) {
-      setSelectedTask(updatedTask)
-    }
-
-    toast.success("Task moved", {
-      description: `"${task.title}" moved to ${destColumn.title}`,
-    })
   }
 
   const addTask = (columnId: string, task: Task) => {
-    const newColumns = columns.map((column) => {
-      if (column.id === columnId) {
-        return {
-          ...column,
-          tasks: [...column.tasks, task],
-        }
-      }
-      return column
-    })
-    setColumns(newColumns)
-    toast.success("Task created", {
-      description: `"${task.title}" added to ${columns.find((col) => col.id === columnId)?.title}`,
-    })
+    // Update state immediately for UI responsiveness
+    setColumns((prevColumns) =>
+      prevColumns.map((column) =>
+        column.id === columnId
+          ? {
+              ...column,
+              tasks: [...column.tasks, task],
+            }
+          : column
+      )
+    )
+
+    // Trigger immediate save for new tasks
+    setTriggerSave(prev => prev + 1)
+
+    
   }
 
   const updateTask = (updatedTask: Task) => {
-    const newColumns = columns.map((column) => {
-      return {
+    setColumns((prevColumns) =>
+      prevColumns.map((column) => ({
         ...column,
         tasks: column.tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
-      }
-    })
-    setColumns(newColumns)
-    setSelectedTask(updatedTask)
-    toast.success("Task updated", {
-      description: `"${updatedTask.title}" has been updated`,
-    })
+      }))
+    )
+
+    // Update selected task if it's the one being updated
+    if (selectedTask && selectedTask.id === updatedTask.id) {
+      setSelectedTask(updatedTask)
+    }
   }
 
   const deleteTask = (taskId: string) => {
-    const newColumns = columns.map((column) => {
-      return {
+    const taskToDelete = columns.flatMap((col) => col.tasks).find((task) => task.id === taskId)
+    
+    setColumns((prevColumns) =>
+      prevColumns.map((column) => ({
         ...column,
         tasks: column.tasks.filter((task) => task.id !== taskId),
-      }
-    })
-    setColumns(newColumns)
-    setSelectedTask(null)
-    toast.success("Task deleted", {
-      description: "The task has been deleted",
-    })
+      }))
+    )
+
+    // Close sidebar if the deleted task was selected
+    if (selectedTask && selectedTask.id === taskId) {
+      setSelectedTask(null)
+    }
+
+    
   }
 
   const duplicateTask = (task: Task, columnId?: string) => {
-    // Create a deep copy of the task with a new ID
     const duplicatedTask: Task = {
-      ...JSON.parse(JSON.stringify(task)),
+      ...task,
       id: `task-${generateId()}`,
       title: `${task.title} (Copy)`,
       createdAt: new Date().toISOString(),
     }
 
-    // If columnId is provided, add to that column, otherwise add to the same column as the original
+    // If columnId is provided, add to that column; otherwise, add to the same column
     const targetColumnId = columnId || columns.find((col) => col.tasks.some((t) => t.id === task.id))?.id
 
     if (targetColumnId) {
       addTask(targetColumnId, duplicatedTask)
-      toast.success("Task duplicated", {
-        description: `"${duplicatedTask.title}" created`,
-      })
     }
   }
 
   const addColumn = () => {
-    if (!newColumnTitle.trim()) {
-      toast.error("Column title cannot be empty")
-      return
-    }
+    if (newColumnTitle.trim()) {
+      const newColumn: ColumnType = {
+        id: `column-${generateId()}`,
+        title: newColumnTitle.trim(),
+        tasks: [],
+        color: "bg-gray-50 dark:bg-gray-900/30",
+      }
 
-    const newColumn: ColumnType = {
-      id: `column-${generateId()}`,
-      title: newColumnTitle,
-      tasks: [],
-    }
+      setColumns([...columns, newColumn])
+      setNewColumnTitle("")
+      setIsAddingColumn(false)
 
-    setColumns([...columns, newColumn])
-    setNewColumnTitle("")
-    setIsAddingColumn(false)
-    toast.success("Column added", {
-      description: `"${newColumnTitle}" column has been added`,
-    })
+      
+    }
   }
 
   const updateColumn = (columnId: string, updates: Partial<ColumnType>) => {
-    const newColumns = columns.map((column) => (column.id === columnId ? { ...column, ...updates } : column))
-    setColumns(newColumns)
+    setColumns((prevColumns) =>
+      prevColumns.map((column) => (column.id === columnId ? { ...column, ...updates } : column))
+    )
   }
 
   const deleteColumn = (columnId: string) => {
-    // Check if column has tasks
-    const column = columns.find((col) => col.id === columnId)
-    if (column && column.tasks.length > 0) {
+    const columnToDelete = columns.find((col) => col.id === columnId)
+    const hasActiveTasks = columnToDelete && columnToDelete.tasks.length > 0
+
+    if (hasActiveTasks) {
       toast.error("Cannot delete column", {
-        description: "Please move or delete all tasks in this column first",
+        description: "Move all tasks to other columns before deleting",
       })
       return
     }
 
-    setColumns(columns.filter((col) => col.id !== columnId))
-    toast.success("Column deleted", {
-      description: `"${column?.title}" column has been deleted`,
-    })
+    setColumns((prevColumns) => prevColumns.filter((column) => column.id !== columnId))
+
+    
   }
 
   const addRule = (rule: Rule) => {
-    setRules([...rules, rule])
-    toast.success("Rule created", {
-      description: `"${rule.name}" has been added`,
-    })
+    setRules((prevRules) => [...prevRules, rule])
+    
   }
 
   const updateRule = (ruleId: string, updates: Partial<Rule>) => {
-    const newRules = rules.map((rule) => (rule.id === ruleId ? { ...rule, ...updates } : rule))
-    setRules(newRules)
+    setRules((prevRules) => prevRules.map((rule) => (rule.id === ruleId ? { ...rule, ...updates } : rule)))
   }
 
   const deleteRule = (ruleId: string) => {
-    setRules(rules.filter((rule) => rule.id !== ruleId))
-    toast.success("Rule deleted", {
-      description: "The automation rule has been deleted",
-    })
+    const ruleToDelete = rules.find((rule) => rule.id === ruleId)
+    
+    setRules((prevRules) => prevRules.filter((rule) => rule.id !== ruleId))
+    
+    
   }
 
-  // Board content for the "board" tab
-  const renderBoardContent = () => (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="flex gap-4 h-full">
-        {columns.map((column) => (
-          <Column
-            key={column.id}
-            column={column}
-            onAddTask={addTask}
-            onTaskClick={setSelectedTask}
-            onDeleteColumn={() => deleteColumn(column.id)}
-            onUpdateColumn={updateColumn}
-            onDuplicateTask={duplicateTask}
-          />
-        ))}
+  // Export data functionality
+  const handleExportData = async () => {
+    const data = await database.exportData()
+    if (data) {
+      const dataStr = JSON.stringify(data, null, 2)
+      const dataBlob = new Blob([dataStr], { type: "application/json" })
+      const url = URL.createObjectURL(dataBlob)
+      const link = document.createElement("a")
+      link.href = url
+      link.download = `day-planner-backup-${new Date().toISOString().split("T")[0]}.json`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    }
+  }
 
-        <div className="shrink-0 w-72">
-          {isAddingColumn ? (
-            <div className="bg-card p-3 rounded-md shadow-sm border border-border">
-              <Label htmlFor="column-title" className="text-foreground">
-                Column Title
-              </Label>
-              <Input
-                id="column-title"
-                value={newColumnTitle}
-                onChange={(e) => setNewColumnTitle(e.target.value)}
-                placeholder="Enter column title"
-                className="mb-2"
-              />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={addColumn}>
-                  Add
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => setIsAddingColumn(false)}>
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <Button
-              variant="outline"
-              className="border-dashed border-2 w-full h-12 border-border text-muted-foreground"
-              onClick={() => setIsAddingColumn(true)}
-            >
-              <Plus className="mr-2 h-4 w-4" /> Add Column
-            </Button>
-          )}
+  // Import data functionality
+  const handleImportData = () => {
+    const input = document.createElement("input")
+    input.type = "file"
+    input.accept = ".json"
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (file) {
+        try {
+          const text = await file.text()
+          const data = JSON.parse(text)
+          
+          const success = await database.importData(data)
+          if (success) {
+            // Reload data after import
+            const newData = await database.loadData()
+            if (newData) {
+              setColumns(newData.columns)
+              setRules(newData.rules)
+            }
+          }
+        } catch (error) {
+          toast.error("Import failed", {
+            description: "Invalid file format or corrupted data"
+          })
+        }
+      }
+    }
+    input.click()
+  }
+
+  // Clear all data functionality
+  const handleClearAllData = async () => {
+    const success = await database.clearAllData()
+    if (success) {
+      setColumns([])
+      setRules([])
+      setSelectedTask(null)
+    }
+  }
+
+  // Show loading state
+  if (database.isLoading) {
+    return (
+      <div className="min-h-screen bg-noise flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 dark:border-gray-100 mx-auto"></div>
+          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">Loading your day planner...</p>
         </div>
       </div>
-    </DragDropContext>
+    )
+  }
+
+  const renderBoardContent = () => (
+    <>
+      {/* Header with data management controls */}
+      <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center space-x-4">
+          <h1 className="text-2xl font-bold">Day Planner</h1>
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" size="sm" onClick={handleExportData}>
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleImportData}>
+              <Upload className="h-4 w-4 mr-2" />
+              Import
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Clear All
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Clear All Data</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete all tasks, columns, and automation rules. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleClearAllData} className="bg-red-600 hover:bg-red-700">
+                    Clear All Data
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
+        <ThemeToggle />
+      </div>
+
+      {/* Board content */}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className="flex-1 overflow-x-auto p-4">
+          <div className="flex gap-6 min-w-max">
+            {columns.map((column) => (
+              <Column
+                key={column.id}
+                column={column}
+                onAddTask={addTask}
+                onTaskClick={setSelectedTask}
+                onDuplicateTask={duplicateTask}
+                onUpdateColumn={updateColumn}
+                onDeleteColumn={() => deleteColumn(column.id)}
+              />
+            ))}
+
+            {/* Add Column Button */}
+            {isAddingColumn ? (
+              <div className="w-80 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+                <div className="space-y-3">
+                  <Label htmlFor="column-title">Column Title</Label>
+                  <Input
+                    id="column-title"
+                    value={newColumnTitle}
+                    onChange={(e) => setNewColumnTitle(e.target.value)}
+                    placeholder="Enter column title..."
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        addColumn()
+                      } else if (e.key === "Escape") {
+                        setIsAddingColumn(false)
+                        setNewColumnTitle("")
+                      }
+                    }}
+                    autoFocus
+                  />
+                  <div className="flex gap-2">
+                    <Button onClick={addColumn} size="sm">
+                      Add Column
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setIsAddingColumn(false)
+                        setNewColumnTitle("")
+                      }}
+                      variant="outline"
+                      size="sm"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsAddingColumn(true)}
+                className="w-80 h-20 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 hover:border-gray-400 dark:hover:border-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                <Plus className="h-6 w-6 mr-2" />
+                Add Column
+              </button>
+            )}
+          </div>
+        </div>
+      </DragDropContext>
+
+      {/* Task Detail Sidebar */}
+      {selectedTask && (
+        <TaskDetailSidebar
+          task={selectedTask}
+          onClose={() => setSelectedTask(null)}
+          onUpdate={updateTask}
+          onDelete={deleteTask}
+          onDuplicate={duplicateTask}
+          columns={columns}
+        />
+      )}
+    </>
   )
 
-  // Automation content for the "automation" tab
   const renderAutomationContent = () => (
-    <div className="max-w-4xl mx-auto">
+    <div className="p-6">
       <AutomationRules
         rules={rules}
         columns={columns}
@@ -617,39 +828,21 @@ export default function KanbanBoard() {
   )
 
   return (
-    <div className="flex flex-col h-screen">
-      <header className="p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold text-card-foreground">Kanban Board</h1>
-          <ThemeToggle />
-        </div>
+    <div className="min-h-screen bg-noise flex flex-col">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+        <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mt-4">
+          <TabsTrigger value="board">Kanban Board</TabsTrigger>
+          <TabsTrigger value="automation">Automation</TabsTrigger>
+        </TabsList>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="board">Board</TabsTrigger>
-            <TabsTrigger value="automation">Automation</TabsTrigger>
-          </TabsList>
+        <TabsContent value="board" className="flex-1 flex flex-col mt-0">
+          {renderBoardContent()}
+        </TabsContent>
 
-          <TabsContent value="board" className="mt-4">
-            {renderBoardContent()}
-          </TabsContent>
-
-          <TabsContent value="automation" className="mt-4">
-            {renderAutomationContent()}
-          </TabsContent>
-        </Tabs>
-      </header>
-
-      {selectedTask && (
-        <TaskDetailSidebar
-          task={selectedTask}
-          onClose={() => setSelectedTask(null)}
-          onUpdate={updateTask}
-          onDelete={deleteTask}
-          onDuplicate={duplicateTask}
-          columns={columns}
-        />
-      )}
+        <TabsContent value="automation" className="flex-1 flex flex-col mt-0">
+          {renderAutomationContent()}
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
