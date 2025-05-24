@@ -55,7 +55,7 @@ export default function Footer({ className = "" }: FooterProps): React.JSX.Eleme
                 <Heart className="h-4 w-4 text-rose-500 fill-current animate-pulse group-hover:scale-110 transition-transform duration-300" />
                 <span className="text-sm font-medium text-foreground">by</span>
                 <a
-                  href="https://x.com/yourusername" // Replace with your actual X username
+                  href="https://x.com/cwd_harshit"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 transition-all duration-300 group-hover:scale-105"
@@ -74,7 +74,7 @@ export default function Footer({ className = "" }: FooterProps): React.JSX.Eleme
                 <Github className="h-4 w-4 text-slate-600 dark:text-slate-400 group-hover:rotate-12 transition-transform duration-300" />
                 <span className="text-sm font-medium text-foreground">Open source on</span>
                 <a
-                  href="https://github.com/yourusername/day-planner" // Replace with your actual GitHub repo
+                  href="https://github.com/c-w-d-harshit/flow-mate"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-700 to-gray-700 dark:from-slate-300 dark:to-gray-300 hover:from-slate-800 hover:to-gray-800 dark:hover:from-slate-200 dark:hover:to-gray-200 transition-all duration-300 group-hover:scale-105"
