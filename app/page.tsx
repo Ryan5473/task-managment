@@ -4,6 +4,7 @@ import { Suspense } from "react"
 import { Calendar } from "lucide-react"
 import KanbanBoard from "@/components/kanban-board"
 import MobileWarning from "@/components/mobile-warning"
+import Footer from "@/components/footer"
 import { useMobileDetection } from "@/hooks/use-mobile-detection"
 
 // Loading component for better UX
@@ -32,6 +33,7 @@ export default function Home(): React.JSX.Element {
     return (
       <>
         <MobileWarning />
+        <Footer />
         <noscript>
           <div className="flex items-center justify-center min-h-screen p-4">
             <div className="text-center space-y-4">
@@ -54,6 +56,8 @@ export default function Home(): React.JSX.Element {
           <KanbanBoard />
         </Suspense>
       </main>
+      
+      <Footer />
       
       {/* Accessibility improvements */}
       <div className="sr-only">
