@@ -61,7 +61,7 @@ export default function Footer({ className = "" }: FooterProps): React.JSX.Eleme
                   className="inline-flex items-center gap-1.5 text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 transition-all duration-300 group-hover:scale-105"
                   aria-label="Visit Harshit's X profile"
                 >
-                  harshit
+                  Harshit
                   <ExternalLink className="h-3 w-3 text-violet-500 opacity-0 group-hover:opacity-100 transition-all duration-300" />
                 </a>
               </div>
