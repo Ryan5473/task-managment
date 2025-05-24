@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { CSPostHogProvider } from "@/components/PosthogProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,7 +70,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background font-sans`}
       >
-        <ThemeProvider
+        <CSPostHogProvider>
+          <ThemeProvider
           attribute="class"
           defaultTheme="system"
           forcedTheme="dark"
@@ -91,7 +93,9 @@ export default function RootLayout({
               },
             }}
           />
-        </ThemeProvider>
+          </ThemeProvider>
+        </CSPostHogProvider>
+        
       </body>
     </html>
   );
