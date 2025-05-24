@@ -7,7 +7,6 @@ import { toast } from "sonner"
 import Column from "./column"
 import TaskDetailSidebar from "./task-detail-sidebar"
 import AutomationRules from "./automation-rules"
-import { ThemeToggle } from "./theme-toggle"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -866,7 +865,7 @@ export default function KanbanBoard() {
                 </AlertDialogContent>
               </AlertDialog>
               
-              <ThemeToggle />
+             
             </div>
           </div>
         </div>
