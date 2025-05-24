@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd"
 import { Plus, Download, Upload, Trash2, Calendar, Settings } from "lucide-react"
 import { toast } from "sonner"
@@ -214,13 +214,19 @@ const generateMockTasks = (): { [key: string]: Task[] } => {
 
 export default function KanbanBoard() {
   const [columns, setColumns] = useState<ColumnType[]>([])
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
-  const [newColumnTitle, setNewColumnTitle] = useState("")
-  const [isAddingColumn, setIsAddingColumn] = useState(false)
   const [rules, setRules] = useState<Rule[]>([])
-  const [activeTab, setActiveTab] = useState("board")
-  const [isInitialized, setIsInitialized] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [isAddingColumn, setIsAddingColumn] = useState(false)
+  const [newColumnTitle, setNewColumnTitle] = useState("")
   const [triggerSave, setTriggerSave] = useState(0)
+  const [isInitialized, setIsInitialized] = useState(false)
+  const [activeTab, setActiveTab] = useState("board")
+  // Add state to track manual moves and prevent automation conflicts
+  const [isManualMoveInProgress, setIsManualMoveInProgress] = useState(false)
+  
+  // Use a ref to track manual move state immediately (synchronously)
+  const manualMoveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const isManualMoveRef = useRef(false)
 
   // Database hook
   const database = useDatabase()
@@ -344,7 +350,8 @@ export default function KanbanBoard() {
 
   // Process automation rules
   useEffect(() => {
-    if (rules.length === 0 || !isInitialized) return
+    // Check the ref immediately for manual move status
+    if (rules.length === 0 || !isInitialized || isManualMoveInProgress || isManualMoveRef.current) return
 
     // Only process enabled rules
     const enabledRules = rules.filter((rule) => rule.enabled)
@@ -433,7 +440,7 @@ export default function KanbanBoard() {
 
       setColumns(newColumns)
     }
-  }, [columns, rules, selectedTask, isInitialized])
+  }, [columns, rules, selectedTask, isInitialized, isManualMoveInProgress])
 
   const handleDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result
@@ -443,11 +450,25 @@ export default function KanbanBoard() {
       return
     }
 
+    // Clear any existing timeout and set manual move flag immediately
+    if (manualMoveTimeoutRef.current) {
+      clearTimeout(manualMoveTimeoutRef.current)
+    }
+    
+    // Set flags immediately (ref updates synchronously)
+    isManualMoveRef.current = true
+    setIsManualMoveInProgress(true)
+
     // Find the source and destination columns
     const sourceColumn = columns.find((col) => col.id === source.droppableId)
     const destColumn = columns.find((col) => col.id === destination.droppableId)
 
-    if (!sourceColumn || !destColumn) return
+    if (!sourceColumn || !destColumn) {
+      // Reset flags if operation fails
+      isManualMoveRef.current = false
+      setIsManualMoveInProgress(false)
+      return
+    }
 
     // Create new arrays for the columns
     const newColumns = [...columns]
@@ -456,7 +477,12 @@ export default function KanbanBoard() {
 
     // Find the task being moved
     const task = sourceColumn.tasks.find((t) => t.id === draggableId)
-    if (!task) return
+    if (!task) {
+      // Reset flags if operation fails
+      isManualMoveRef.current = false
+      setIsManualMoveInProgress(false)
+      return
+    }
 
     // Update task status to match destination column
     const updatedTask = { ...task, status: destColumn.title }
@@ -497,6 +523,19 @@ export default function KanbanBoard() {
     }
 
     setColumns(newColumns)
+
+    // Show success toast for manual move
+    if (source.droppableId !== destination.droppableId) {
+      toast.success("Task moved manually", {
+        description: `"${updatedTask.title}" moved to ${destColumn.title}. Automation paused briefly.`,
+      })
+    }
+
+    // Clear the manual move flag after a delay to allow automation to resume
+    manualMoveTimeoutRef.current = setTimeout(() => {
+      isManualMoveRef.current = false
+      setIsManualMoveInProgress(false)
+    }, 2000) // Increased to 2 seconds for better reliability
   }
 
   const addTask = (columnId: string, task: Task) => {
@@ -884,6 +923,9 @@ export default function KanbanBoard() {
               <TabsTrigger value="automation" className="gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm">
                 <Settings className="h-4 w-4" />
                 Automation
+                {isManualMoveInProgress && (
+                  <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" title="Automation paused during manual move" />
+                )}
               </TabsTrigger>
             </TabsList>
           </div>

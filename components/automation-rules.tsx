@@ -324,6 +324,22 @@ export default function AutomationRules({
         </Dialog>
       </div>
 
+      {/* Information Note */}
+      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/20 dark:border-blue-800">
+        <div className="flex items-start gap-2">
+          <div className="p-1 bg-blue-100 rounded dark:bg-blue-800">
+            <Zap className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+          </div>
+          <div className="text-sm">
+            <p className="font-medium text-blue-800 dark:text-blue-200 mb-1">How automation works</p>
+            <p className="text-blue-700 dark:text-blue-300">
+              Manual drag-and-drop moves temporarily pause automation for 1.5 seconds to ensure your intended placement is preserved. 
+              Automation will resume automatically after this period.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Rules List */}
       {rules.length === 0 ? (
         <div className="text-center py-12 space-y-4">
