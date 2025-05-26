@@ -524,12 +524,7 @@ export default function KanbanBoard() {
 
     setColumns(newColumns)
 
-    // Show success toast for manual move
-    if (source.droppableId !== destination.droppableId) {
-      toast.success("Task moved manually", {
-        description: `"${updatedTask.title}" moved to ${destColumn.title}. Automation paused briefly.`,
-      })
-    }
+    
 
     // Clear the manual move flag after a delay to allow automation to resume
     manualMoveTimeoutRef.current = setTimeout(() => {
