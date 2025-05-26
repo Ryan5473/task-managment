@@ -1,6 +1,19 @@
 # FlowMate
 
-A modern, efficient task management and productivity application built with Next.js. FlowMate features a Kanban board interface with drag-and-drop functionality, automation rules, and local data persistence.
+FlowMate is a modern, intuitive task management and productivity application designed to streamline your workflow and boost productivity. Built with Next.js 15 and TypeScript, it combines the power of a Kanban board interface with intelligent automation features, all while keeping your data secure with local storage.
+
+![FlowMate Preview](/public/og.png)
+
+## ✨ Why FlowMate?
+
+FlowMate stands out with its perfect blend of simplicity and power:
+
+- **Intuitive Interface**: Clean, modern UI with a focus on usability
+- **Privacy-First**: All data stays on your device with IndexedDB storage
+- **Smart Automation**: Create custom rules to automate your workflow
+- **Type-Safe**: Built with TypeScript for reliability and developer experience
+- **Modern Stack**: Leverages Next.js 15, React 19, and Tailwind CSS 4
+- **Cross-Platform**: Responsive design works seamlessly across all devices
 
 ## 🚀 Features
 
