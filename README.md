@@ -51,7 +51,7 @@ FlowMate stands out with its perfect blend of simplicity and power:
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/C-W-D-Harshit/Flow-Mate.git
 cd day-planner
 ```
 
@@ -320,7 +320,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For support and questions:
 - Check the [documentation](#component-documentation)
-- Review existing [issues](link-to-issues)
+- Review existing [issues](https://github.com/C-W-D-Harshit/Flow-Mate/issues)
 - Create a new issue with detailed information
 
 ---
