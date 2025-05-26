@@ -34,11 +34,20 @@ export const metadata: Metadata = {
     title: "FlowMate - Streamline Your Workflow",
     description: "A modern, intuitive Kanban board application with automation features to streamline your project management and boost productivity.",
     siteName: "FlowMate",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "FlowMate - Streamline Your Workflow"
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
     title: "FlowMate - Streamline Your Workflow",
     description: "A modern, intuitive Kanban board application with automation features to streamline your project management and boost productivity.",
+    images: ["/og.png"]
   },
   robots: {
     index: true,
