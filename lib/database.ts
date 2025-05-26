@@ -171,11 +171,8 @@ export const dbService = {
   // Utility operations
   async clearAllData(): Promise<void> {
     try {
-      await Promise.all([
-        db.tasks.clear(),
-        db.columns.clear(),
-        db.rules.clear()
-      ])
+      // Only clear tasks, keep columns and rules
+      await db.tasks.clear()
     } catch (error) {
       console.error("Error clearing data:", error)
       throw new Error("Failed to clear data")

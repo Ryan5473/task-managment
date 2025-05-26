@@ -713,8 +713,11 @@ export default function KanbanBoard() {
   const handleClearAllData = async () => {
     const success = await database.clearAllData()
     if (success) {
-      setColumns([])
-      setRules([])
+      // Update columns to keep structure but remove tasks
+      setColumns(prevColumns => prevColumns.map(column => ({
+        ...column,
+        tasks: []
+      })))
       setSelectedTask(null)
     }
   }
@@ -890,9 +893,9 @@ export default function KanbanBoard() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Clear All Data</AlertDialogTitle>
+                    <AlertDialogTitle>Clear All Tasks</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will permanently delete all tasks, columns, and automation rules. This action cannot be undone.
+                      This will permanently delete all tasks while keeping your columns and automation rules intact. This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
