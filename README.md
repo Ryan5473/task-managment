@@ -2,7 +2,6 @@
 
 task-managment is a modern, intuitive task management and productivity application designed to streamline your workflow and boost productivity. Built with Next.js 15 and TypeScript, it combines the power of a Kanban board interface with intelligent automation features, all while keeping your data secure with local storage.
 
-![task-managment Preview](/public/og.png)
 
 ## ✨ Why task-managment?
 task-managment stands out with its perfect blend of simplicity and power:
