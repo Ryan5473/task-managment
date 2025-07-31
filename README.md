@@ -1,12 +1,11 @@
-# FlowMate
+# task-managment
 
-FlowMate is a modern, intuitive task management and productivity application designed to streamline your workflow and boost productivity. Built with Next.js 15 and TypeScript, it combines the power of a Kanban board interface with intelligent automation features, all while keeping your data secure with local storage.
+task-managment is a modern, intuitive task management and productivity application designed to streamline your workflow and boost productivity. Built with Next.js 15 and TypeScript, it combines the power of a Kanban board interface with intelligent automation features, all while keeping your data secure with local storage.
 
-![FlowMate Preview](/public/og.png)
+![task-managment Preview](/public/og.png)
 
-## ✨ Why FlowMate?
-
-FlowMate stands out with its perfect blend of simplicity and power:
+## ✨ Why task-managment?
+task-managment stands out with its perfect blend of simplicity and power:
 
 - **Intuitive Interface**: Clean, modern UI with a focus on usability
 - **Privacy-First**: All data stays on your device with IndexedDB storage
@@ -51,9 +50,7 @@ FlowMate stands out with its perfect blend of simplicity and power:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/C-W-D-Harshit/Flow-Mate.git
-cd day-planner
-```
+
 
 2. Install dependencies:
 ```bash
@@ -71,7 +68,7 @@ pnpm dev
 bun dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser to see FlowMate.
+4. Open [http://localhost:3000](http://localhost:3000) 
 
 ### Available Scripts
 
@@ -123,7 +120,7 @@ day-planner/
 
 ## 💾 Data Persistence
 
-FlowMate uses **IndexedDB** for local data storage via the Dexie library, ensuring your tasks, columns, and automation rules persist between sessions without requiring external servers or accounts.
+it uses **IndexedDB** for local data storage via the Dexie library, ensuring your tasks, columns, and automation rules persist between sessions without requiring external servers or accounts.
 
 ### Database Schema
 
@@ -274,7 +271,7 @@ const {
 
 ### Vercel (Recommended)
 
-FlowMate is optimized for deployment on Vercel:
+it  is optimized for deployment on Vercel:
 
 1. Push your code to GitHub/GitLab/Bitbucket
 2. Connect your repository to Vercel
@@ -282,7 +279,7 @@ FlowMate is optimized for deployment on Vercel:
 
 ### Other Platforms
 
-FlowMate can be deployed on any platform supporting Next.js:
+it  can be deployed on any platform supporting Next.js:
 - Netlify
 - AWS Amplify
 - Railway
@@ -325,4 +322,3 @@ For support and questions:
 
 ---
 
-**FlowMate** - Streamline your workflow with intelligent task management.
