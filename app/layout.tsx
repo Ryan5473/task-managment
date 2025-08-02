@@ -19,19 +19,19 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "FlowMate - Streamline Your Workflow",
+    default: "Task-managment - Streamline Your Workflow",
     template: "%s | FlowMate",
   },
   description: "A modern, intuitive Kanban board application with automation features to streamline your project management and boost productivity.",
   keywords: ["kanban", "project management", "task management", "productivity", "workflow", "automation"],
   authors: [{ name: "FlowMate Team" }],
-  creator: "FlowMate",
-  publisher: "FlowMate",
-  applicationName: "FlowMate",
+  creator: "Task-managment",
+  publisher: "Task-managment",
+  applicationName: "Task-managment",
   category: "productivity",
   openGraph: {
     type: "website",
-    title: "FlowMate - Streamline Your Workflow",
+    title: "Task-managment - Streamline Your Workflow",
     description: "A modern, intuitive Kanban board application with automation features to streamline your project management and boost productivity.",
     siteName: "FlowMate",
     images: [

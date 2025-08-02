@@ -17,7 +17,7 @@ function LoadingFallback() {
           <Calendar className="h-6 w-6 text-primary absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-xl font-semibold text-foreground">Loading FlowMate</h2>
+          <h2 className="text-xl font-semibold text-foreground">Loading Task-managment</h2>
           <p className="text-sm text-muted-foreground">Preparing your workspace...</p>
         </div>
       </div>

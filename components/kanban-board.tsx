@@ -849,7 +849,7 @@ export default function KanbanBoard() {
               <Calendar className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-foreground">FlowMate</h1>
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Task-managment</h1>
               <p className="text-sm text-muted-foreground">Streamline your workflow</p>
             </div>
           </div>
