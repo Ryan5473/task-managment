@@ -74,7 +74,7 @@ export default function Footer({ className = "" }: FooterProps): React.JSX.Eleme
                 <Github className="h-4 w-4 text-slate-600 dark:text-slate-400 group-hover:rotate-12 transition-transform duration-300" />
                 <span className="text-sm font-medium text-foreground">Open source on</span>
                 <a
-                  href="https://github.com/c-w-d-harshit/flow-mate"
+                  href=""
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-sm font-semibold text-transparent bg-clip-text bg-gradient-to-r from-slate-700 to-gray-700 dark:from-slate-300 dark:to-gray-300 hover:from-slate-800 hover:to-gray-800 dark:hover:from-slate-200 dark:hover:to-gray-200 transition-all duration-300 group-hover:scale-105"

@@ -308,16 +308,6 @@ The application uses:
 4. Ensure TypeScript compilation passes
 5. Run linting: `npm run lint`
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-For support and questions:
-- Check the [documentation](#component-documentation)
-- Review existing [issues](https://github.com/C-W-D-Harshit/Flow-Mate/issues)
-- Create a new issue with detailed information
 
 ---
 
